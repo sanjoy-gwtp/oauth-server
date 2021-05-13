@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Oauth2 Server</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/materializecss/0.99.0/css/materialize.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/material-design-icons/3.0.1/material-icons.css}"/>
+
+    <style>
+        center {
+            margin: auto;
+            width: 60%;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        main {
+            flex: 1 0 auto;
+        }
+        body {
+            background: #fff;
+        }
+        .input-field input[type=date]:focus + label,
+        .input-field input[type=text]:focus + label,
+        .input-field input[type=email]:focus + label,
+        .input-field input[type=password]:focus + label {
+            color: #039be5;
+        }
+        .input-field input[type=date]:focus,
+        .input-field input[type=text]:focus,
+        .input-field input[type=email]:focus,
+        .input-field input[type=password]:focus {
+            border-bottom: 2px solid #039be5;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+<div class="section"></div>
+<main>
+    <div class="center">
+        <i class="large material-icons">group</i>
+        <!--<div class="section"></div>-->
+
+        <h5 class="blue-text">Please, login into your account</h5>
+        <!--<div class="section"></div>-->
+
+        <div class="container">
+            <div class="z-depth-1 grey lighten-3 row"
+                 style="display: inline-block; padding: 36px 16px 36px; border: 1px solid #EEE;">
+
+                <form class="col s12" method="post" th:action="@{/login}"  style="width: 320px;">
+
+                    <div th:if="${param.error}" class="alert alert-error" style="color:red">
+                        <div th:if="${param.error[0]=='1000'}" style="color:red">
+                            User is disabled.
+                        </div>
+                        <div th:if="${param.error[0]=='1001'}" style="color:red">
+                            User or Password Invalid.
+                        </div>
+                        <div th:if="${param.error[0]=='1002'}" style="color:red">
+                            User Not Found.
+                        </div>
+                        <div th:if="${param.error[0]=='1003'}" style="color:red">
+                           User Account Locked.
+                        </div>
+                        <div th:if="${param.error[0]=='1004'}" style="color:red">
+                           User Account Expired.
+                        </div>
+                        <div th:if="${param.error[0]=='1005'}" style="color:red">
+                           User Session Expired.
+                        </div>
+                    </div>
+
+
+                    <!--<div th:if="${param.error}">-->
+                        <!--<div  style="color:red">-->
+                            <!--Login Failed!!!<br />-->
+                            <!--Bad Credentials.....-->
+                            <!--&lt;!&ndash;Login Failed!!!<br />&ndash;&gt;-->
+                            <!--&lt;!&ndash;Reason : ${SPRING_SECURITY_LAST_EXCEPTION.message}&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <div class='row'>
+                        <div class='input-field col s12'>
+                            <input class='validate' type='text' name='username' id='username' required="required"/>
+                            <label for='username'>username</label>
+                        </div>
+                    </div>
+
+                    <div class='row'>
+                        <div class='input-field col s12'>
+                            <input class='validate' type='password' name='password' id='password' required="required"/>
+                            <label for='password'>Enter your password</label>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <div class="center">
+                        <div class='row'>
+                            <button type='submit' name='btn_login' class='col s12 btn waves-effect blue'>
+                                Login
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="text/javascript" th:src="@{/webjars/jquery/2.2.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/materializecss/0.99.0/js/materialize.min.js}"></script>
+</body>
+</html>

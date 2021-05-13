@@ -1,0 +1,67 @@
+variables:
+  ARTIFACT_BUILD_PATH: 'target'
+
+stages:
+  - build
+  - build_image
+  - push_image
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - chmod +x mvnw
+  script:
+    - ./mvnw -s .mvn/settings.xml clean package -Dmaven.test.skip=true
+  artifacts:
+    paths:
+     - ./target
+  only: ['master']
+  tags:
+    - 'docker2'
+
+
+build_image:
+  stage: build_image
+  when: on_success
+  before_script:
+    - export POM_PROPERTIES=${ARTIFACT_BUILD_PATH}/maven-archiver/pom.properties
+    - chmod +x mvnw
+    - echo "Dockerfile:-"
+    - echo "$(cat Dockerfile)"
+  script:
+    - export ARTIFACT="$ARTIFACT_BUILD_PATH/$(cat ${POM_PROPERTIES} | grep artifactId | cut -d'=' -f2-)-$(cat ${POM_PROPERTIES} | grep version | cut -d'=' -f2-).jar"
+    - export VERSION="$(cat ${POM_PROPERTIES} | grep version | cut -d'=' -f2-)"
+    - docker build --rm --force-rm --label "com.surjo.build.id=$CI_PIPELINE_ID" --label "com.surjo.version=${VERSION}" --build-arg ARTIFACT="$ARTIFACT" -t ${DOCKER_IMAGE}:latest .
+    - docker tag ${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}:B${CI_PIPELINE_ID}
+  only: ['master']
+  tags: ['shell2']
+
+push_image:
+  stage: push_image
+  when: on_success
+  only: ['master']
+  tags: ['shell2']
+  before_script:
+    - 'echo "Docker image: ${DOCKER_IMAGE}"'
+  script:
+    - docker push ${DOCKER_IMAGE}:latest
+    - docker push ${DOCKER_IMAGE}:B${CI_PIPELINE_ID}
+    # clean up image
+    - docker rmi ${DOCKER_IMAGE}:latest
+    - docker rmi ${DOCKER_IMAGE}:B${CI_PIPELINE_ID}
+
+
+deploy_dev:
+  stage: deploy
+  when: on_success
+  only:
+    - master
+  tags:
+    - docker-server-ssh2
+  before_script:
+      - chmod +x mvnw
+  script:
+    - 'export BUILD_NUMBER=$CI_PIPELINE_IID'
+    - docker pull ${DOCKER_IMAGE}:latest
+    - docker service update --force --image ${DOCKER_IMAGE}:latest dev_oauth

@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+
+    <!--<script type="text/javascript" src="ssoctrl.js"></script>-->
+    <iframe id="myif" src="ssoctrl.html" style="display:none"></iframe>
+
+
+    <form>
+        <label>Token:</label>
+        <br />
+        <textarea id="token" name="token" rows="10" cols="100"></textarea>
+        <br />
+        <button onclick="submitToken(getElementById('token').value)" type="button">Submit Token</button>
+        <button onclick="checkToken()" type="button">Check Token</button>
+    </form>
+    <br/>
+    <textarea rows="1" cols="100"></textarea>
+
+    <script>
+        var lastActivityTime = Date.now();
+        function submitToken(token) {
+            var msg = {
+                type : 'TOKEN',
+                clientId: 'adminClient',
+                clientSecret: 'secret',
+                token: JSON.parse(token)
+            };
+            document.getElementById('myif').contentWindow.postMessage(msg,'http://localhost:8081/oauth-server');
+        }
+
+        function checkToken() {
+            var msg = {
+                type : 'CHECK_TOKEN',
+                clientId: 'adminClient',
+                clientSecret: 'secret'
+            };
+            document.getElementById('myif').contentWindow.postMessage(msg,'http://localhost:8081/oauth-server');
+        }
+
+        window.addEventListener('message', function(e) {
+            console.log("Response:",e.data);
+        }, false);
+
+        function onActivity() {
+            var now = Date.now();
+            var diff = now - lastActivityTime;
+            if(diff >= 1000) {
+                lastActivityTime = now;
+                var msg = {
+                    type: 'ACTIVITY',
+                    lastActivityTime : lastActivityTime
+                }
+                document.getElementById('myif').contentWindow.postMessage(msg,'http://localhost:8081/oauth-server');
+            }
+        }
+
+        document.addEventListener("keypress", onActivity);
+
+        document.addEventListener("click", onActivity);
+
+        document.addEventListener("mousemove", onActivity);
+
+        document.addEventListener("scroll", onActivity);
+    </script>
+
+</body>
+
+</html>

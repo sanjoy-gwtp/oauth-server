@@ -1,0 +1,23 @@
+-- INSERT INTO oauth_client_details
+-- 	(client_id, client_secret, scope, authorized_grant_types,
+-- 	web_server_redirect_uri, authorities, access_token_validity,
+-- 	refresh_token_validity, additional_information, autoapprove,scoped)
+-- VALUES
+-- 	("adminClient", "{noop}secret", "read,write",
+-- 	"password,authorization_code,refresh_token", "http://localhost:4200/,http://localhost:4201/", null, 60, 180, null, "read,write",true);
+-- INSERT INTO oauth_client_details
+-- 	(client_id, client_secret, scope, authorized_grant_types,
+-- 	web_server_redirect_uri, authorities, access_token_validity,
+-- 	refresh_token_validity, additional_information, autoapprove,scoped)
+-- VALUES
+-- 	("sampleClientId", "{noop}secret", "read,write,foo,bar",
+-- 	"implicit", null, null, 36000, 36000, null, "read,write",true);
+-- INSERT INTO oauth_client_details
+-- 	(client_id, client_secret, scope, authorized_grant_types,
+-- 	web_server_redirect_uri, authorities, access_token_validity,
+-- 	refresh_token_validity, additional_information, autoapprove,scoped)
+-- VALUES
+-- 	("barClientIdPassword", "{noop}secret", "bar,read,write",
+-- 	"password,authorization_code,refresh_token", null, null, 36000, 36000, null, "read,write",true);
+--
+--
